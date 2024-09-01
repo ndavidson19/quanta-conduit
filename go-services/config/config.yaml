@@ -1,0 +1,6 @@
+# Database configuration
+database_url: "postgres://postgres:my_postgres_password@localhost:5432/my_postgres_db?sslmode=disable"
+
+# Other configurations
+server_port: 8080
+log_level: "info"

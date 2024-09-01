@@ -1,42 +1,46 @@
-# Simple Makefile for a Go project
+# File: Makefile
 
-# Build the application
-all: build
+.PHONY: build test docker-build docker-push deploy
 
 build:
-	@echo "Building..."
-	
-	@go build -o main cmd/api/main.go
+	go build -o rest-ingestion-service ./cmd/rest-ingestion-service
 
-# Run the application
-run:
-	@go run cmd/api/main.go
+lint:
+	golangci-lint run
 
-# Test the application
 test:
-	@echo "Testing..."
-	@go test ./tests -v
+	./run_tests.sh
 
-# Clean the binary
-clean:
-	@echo "Cleaning..."
-	@rm -f main
+docker-build:
+	docker build -t your-registry/rest-ingestion-service:latest -f deployments/Dockerfile .
 
-# Live Reload
-watch:
-	@if command -v air > /dev/null; then \
-	    air; \
-	    echo "Watching...";\
-	else \
-	    read -p "Go's 'air' is not installed on your machine. Do you want to install it? [Y/n] " choice; \
-	    if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
-	        go install github.com/air-verse/air@latest; \
-	        air; \
-	        echo "Watching...";\
-	    else \
-	        echo "You chose not to install air. Exiting..."; \
-	        exit 1; \
-	    fi; \
-	fi
+docker-push:
+	docker push your-registry/rest-ingestion-service:latest
 
-.PHONY: all build run test clean
+deploy:
+	kubectl apply -f deployments/kubernetes/deployment.yaml
+	kubectl apply -f deployments/kubernetes/service.yaml
+
+setup-pre-commit:
+	./scripts/setup_pre_commit.sh
+
+# Targets with skip options
+test-skip:
+	@echo "skiping tests"
+
+lint-skip:
+	@echo "skiping linting"
+
+build-skip:
+	docker build -t rest-ingestion-service:latest -f deployments/Dockerfile . --no-cache
+
+deploy-skip:
+	kubectl apply -f deployments/kubernetes/deployment.yaml --force
+
+# CI target that runs all checks
+ci: lint test build
+
+# CI target that skipes all checks
+ci-skip: lint-skip test-skip build-skip
+
+all: build test docker-build docker-push deploy setup-pre-commit ci test-skip lint-skip build-skip deploy-skip ci-skip

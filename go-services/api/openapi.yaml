@@ -1,0 +1,652 @@
+openapi: 3.0.0
+info:
+  title: Trading Platform API
+  version: 1.0.0
+  description: API for a comprehensive trading platform with user management, account operations, portfolio management, and trading capabilities.
+
+servers:
+  - url: https://api.tradingplatform.com/v1
+
+paths:
+  /users:
+    get:
+      summary: List users
+      operationId: listUsers
+      tags:
+        - Users
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a user
+      operationId: createUser
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{userId}:
+    get:
+      summary: Get a user
+      operationId: getUser
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Update a user
+      operationId: updateUser
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete a user
+      operationId: deleteUser
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: User deleted
+
+  /accounts:
+    get:
+      summary: List accounts
+      operationId: listAccounts
+      tags:
+        - Accounts
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+    post:
+      summary: Create an account
+      operationId: createAccount
+      tags:
+        - Accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/Account'
+
+  /accounts/{accountId}:
+    get:
+      summary: Get an account
+      operationId: getAccount
+      tags:
+        - Accounts
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/Account'
+
+  /accounts/{accountId}/transactions:
+    get:
+      summary: List transactions for an account
+      operationId: listAccountTransactions
+      tags:
+        - Transactions
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+  /portfolios:
+    get:
+      summary: List portfolios
+      operationId: listPortfolios
+      tags:
+        - Portfolios
+      parameters:
+        - name: accountId
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Portfolio'
+    post:
+      summary: Create a portfolio
+      operationId: createPortfolio
+      tags:
+        - Portfolios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePortfolioRequest'
+      responses:
+        '201':
+          description: Portfolio created
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+
+  /portfolios/{portfolioId}:
+    get:
+      summary: Get a portfolio
+      operationId: getPortfolio
+      tags:
+        - Portfolios
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+
+  /portfolios/{portfolioId}/holdings:
+    get:
+      summary: List portfolio holdings
+      operationId: listPortfolioHoldings
+      tags:
+        - Portfolios
+      parameters:
+        - name: portfolioId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PortfolioHolding'
+
+  /assets:
+    get:
+      summary: List assets
+      operationId: listAssets
+      tags:
+        - Assets
+      parameters:
+        - name: assetType
+          in: query
+          schema:
+            type: string
+            enum: [stock, crypto, forex]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Asset'
+
+  /orders:
+    get:
+      summary: List orders
+      operationId: listOrders
+      tags:
+        - Orders
+      parameters:
+        - name: accountId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, executed, cancelled]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      summary: Create an order
+      operationId: createOrder
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{orderId}:
+    get:
+      summary: Get an order
+      operationId: getOrder
+      tags:
+        - Orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:    
+              schema:
+                $ref: '#/components/schemas/Order'
+    delete:
+      summary: Cancel an order
+      operationId: cancelOrder
+      tags:
+        - Orders
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Order cancelled
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        provider:
+          type: string
+        emailVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateUserRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        provider:
+          type: string
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        provider:
+          type: string
+        emailVerified:
+          type: boolean
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        accountId:
+          type: integer
+        balance:
+          type: string
+          format: decimal
+        accountType:
+          type: string
+        isSystemAccount:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateAccountRequest:
+      type: object
+      required:
+        - userId
+        - accountType
+      properties:
+        userId:
+          type: integer
+        accountType:
+          type: string
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        debitAccountId:
+          type: integer
+        creditAccountId:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+        description:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: integer
+        accountId:
+          type: integer
+        totalValue:
+          type: string
+          format: decimal
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreatePortfolioRequest:
+      type: object
+      required:
+        - accountId
+      properties:
+        accountId:
+          type: integer
+
+    PortfolioHolding:
+      type: object
+      properties:
+        id:
+          type: integer
+        portfolioId:
+          type: integer
+        assetId:
+          type: integer
+        quantity:
+          type: string
+          format: decimal
+        averageBuyPrice:
+          type: string
+          format: decimal
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Asset:
+      type: object
+      properties:
+        id:
+          type: integer
+        symbol:
+          type: string
+        name:
+          type: string
+        assetType:
+          type: string
+          enum: [stock, crypto, forex]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        accountId:
+          type: integer
+        assetId:
+          type: integer
+        orderType:
+          type: string
+          enum: [market, limit]
+        side:
+          type: string
+          enum: [buy, sell]
+        quantity:
+          type: string
+          format: decimal
+        price:
+          type: string
+          format: decimal
+        status:
+          type: string
+          enum: [pending, executed, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateOrderRequest:
+      type: object
+      required:
+        - accountId
+        - assetId
+        - orderType
+        - side
+        - quantity
+      properties:
+        accountId:
+          type: integer
+        assetId:
+          type: integer
+        orderType:
+          type: string
+          enum: [market, limit]
+        side:
+          type: string
+          enum: [buy, sell]
+        quantity:
+          type: string
+          format: decimal
+        price:
+          type: string
+          format: decimal
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - BearerAuth: []

@@ -1,0 +1,20 @@
+version: "2"
+sql:
+  - schema: "schema/postgres_schema.sql"
+    queries:
+      - "queries/user.sql"
+      - "queries/account.sql"
+      - "queries/transaction.sql"
+      - "queries/assets.sql"
+      - "queries/executed_orders.sql"
+      - "queries/orders.sql"
+      - "queries/portfolio.sql"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "db"
+        out: "internal/db"
+        emit_json_tags: true
+        emit_prepared_queries: false
+        emit_interface: true
+        emit_exact_table_names: false
